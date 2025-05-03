@@ -96,6 +96,7 @@ public:
     // Each user has their own city data file: username_city.txt
     void saveCityData(int money, int eco, int population, int day, int resLevel, int comLevel, int resCount, int comCount) {
         ofstream out((username + "_city.txt").c_str());
+        
         out << money << " " << eco << " " << population << " " << day << " "
             << resLevel << " " << comLevel << " " << resCount << " " << comCount << endl;
         out.close();
@@ -111,7 +112,7 @@ public:
 };
 
 // === Menu Display ===
-void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0, float money = 1.2, int people = 4200, int co2 = 34, int day = 27) {
+void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0, float money = 1.2, int people = 4200, int co2 = 34, int pollution, int day = 27) {
     cout << "==========================================\n";
     cout << "   SMART ECO CITY SIMULATION - MAIN MENU  \n";
     cout << "==========================================\n";
@@ -149,7 +150,7 @@ public:
 
 class TreePlanting : public Activity {
 public:
-    void perform(int& eco, int& money, int& population) {
+    void perform(int& eco, int& money, int& population){
         eco += 5;
         money -= 100;
         cout << "Tree planting event! Eco +5, Money -100\n";
@@ -276,6 +277,7 @@ void runSimulation(string username) {
     int day = 1;
     int resLevel = 1, comLevel = 1, resCount = 1, comCount = 1;
     int numBikes = 0, numBuses = 0, numEVs = 0;
+    int pollution=640;
     User user;
     user.username = username;
 
@@ -351,6 +353,7 @@ void runSimulation(string username) {
                     buildings[buildingCount++] = new CommercialDistrict();
                     money -= 700;
                     eco += 5;
+                    pollution+=5;
                     comCount++;
                     cout << "New Commercial District built! (+5 eco)\n";
                 } else if (buildChoice == 0) {
@@ -407,12 +410,12 @@ void runSimulation(string username) {
                     else if (tChoice == 2) numBuses++;
                     else if (tChoice == 3) numEVs++;
                     if (tChoice == 1)
-        cout << "Bike lanes expanded! Total bike lanes: " << numBikes << ". Eco +2\n";
+            cout << "Bike lanes expanded! Total bike lanes: " << numBikes << ". Eco +2\n";
     else if (tChoice == 2)
         cout << "New buses added! Total buses: " << numBuses << ". Eco +1, Money -100\n";
     else if (tChoice == 3)
         cout << "EV charging stations built! Total EV stations: " << numEVs << ". Eco +3, Money -200\n";
-        
+
                 } else if (tChoice != 0) {
                     throw ActionException("Invalid transport action!");
                 }
@@ -440,6 +443,7 @@ void runSimulation(string username) {
                 cout << "Recent Transport Actions:\n"; transportLog.show();
                 cout << "Recent Citizen Actions:\n"; citizenLog.show();
                 cout << "Bike Lanes: " << numBikes << ", Buses: " << numBuses << ", EV Stations: " << numEVs << endl;
+                cout << "Pollution: " << pollution << " AQI\n";
             break;
             }
             case 6: { // Social Features
