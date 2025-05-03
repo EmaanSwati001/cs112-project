@@ -275,7 +275,7 @@ void runSimulation(string username) {
     int population = 100;
     int day = 1;
     int resLevel = 1, comLevel = 1, resCount = 1, comCount = 1;
-
+    int numBikes = 0, numBuses = 0, numEVs = 0;
     User user;
     user.username = username;
 
@@ -403,6 +403,16 @@ void runSimulation(string username) {
                 if (tChoice >= 1 && tChoice <= 3) {
                     transports[tChoice - 1]->operate(eco, money);
                     transportLog.add(transports[tChoice - 1]->name());
+                    if (tChoice == 1) numBikes++;
+                    else if (tChoice == 2) numBuses++;
+                    else if (tChoice == 3) numEVs++;
+                    if (tChoice == 1)
+        cout << "Bike lanes expanded! Total bike lanes: " << numBikes << ". Eco +2\n";
+    else if (tChoice == 2)
+        cout << "New buses added! Total buses: " << numBuses << ". Eco +1, Money -100\n";
+    else if (tChoice == 3)
+        cout << "EV charging stations built! Total EV stations: " << numEVs << ". Eco +3, Money -200\n";
+        
                 } else if (tChoice != 0) {
                     throw ActionException("Invalid transport action!");
                 }
@@ -429,6 +439,7 @@ void runSimulation(string username) {
                 cout << "Recent Activities:\n"; activityLog.show();
                 cout << "Recent Transport Actions:\n"; transportLog.show();
                 cout << "Recent Citizen Actions:\n"; citizenLog.show();
+                cout << "Bike Lanes: " << numBikes << ", Buses: " << numBuses << ", EV Stations: " << numEVs << endl;
             break;
             }
             case 6: { // Social Features
