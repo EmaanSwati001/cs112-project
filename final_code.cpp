@@ -377,14 +377,19 @@ void runSimulation(string username) {
             }
             case 2: { // Manage Environment
                 cout << "\n--- MANAGE ENVIRONMENT ---\n";
-                cout << "1. Recycling\n2. Tree Planting\n3. Energy Production\n0. Back\nChoose: ";
+                cout << "1. Recycling\n2. Tree Planting\n3. Energy Production\n4. Turn of light when not in use\n0. Back\nChoose: ";
                 int envChoice;
                 cin >> envChoice;
                 cin.ignore();
                 if (envChoice >= 1 && envChoice <= 3) {
                     activities[envChoice - 1]->perform(eco, money, population);
                     activityLog.add(activities[envChoice - 1]->name());
-                } else if (envChoice != 0) {
+                }else if (envChoice==4 ) {
+                        eco+=2;
+                        cout<<"you encourage people to turn off the light when not in use\nEco improved +2\n";
+                        activityLog.add("turn off light when not in use");
+                    }
+             else if (envChoice != 0) {
                     throw ActionException("Invalid environment action!");
             }
             break;
@@ -412,7 +417,8 @@ void runSimulation(string username) {
                 if (cChoice >= 1 && cChoice <= 3) {
                     actions[cChoice - 1]->act(eco, money, population);
                     citizenLog.add(actions[cChoice - 1]->name());
-                } else if (cChoice != 0) {
+                } 
+                else if (cChoice != 0) {
                     throw ActionException("Invalid citizen action!");
                 }
             break;
@@ -451,7 +457,9 @@ void runSimulation(string username) {
 
         // Save city data after each action
         user.saveCityData(money, eco, population, day, resLevel, comLevel, resCount, comCount);
-
+        ofstream rankingOut("city_ranking.txt", ios::app);
+        rankingOut<<user.username<<" "<<eco<<" "<<population<<endl;
+        rankingOut.close();
         if (choice != 0) {
             cout << "\nPress Enter to continue...";
             cin.get();
