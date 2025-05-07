@@ -112,7 +112,7 @@ public:
 };
 
 // === Menu Display ===
-void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0, float money = 1.2, int people = 4200, int co2 = 34, int pollution, int day = 27) {
+void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0, float money = 1.2, int people = 4200, int co2 = 34, int pollution=540, int day = 27) {
     cout << "==========================================\n";
     cout << "   SMART ECO CITY SIMULATION - MAIN MENU  \n";
     cout << "==========================================\n";
