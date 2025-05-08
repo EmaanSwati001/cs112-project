@@ -1,0 +1,30 @@
+// === City Activity
+class GreenProgram : public Activity {
+public:
+    void perform(int& eco, int& money, int& population, int& pollution) override {
+        if (money < 300) {
+            throw ActionException("Not enough money for green program!");
+        }
+        
+        money -= 300;
+        eco += 8;
+        pollution -= 12;
+        population += 30;
+        
+        cout << "🌿 Green program launched! Eco +8, Pollution -12, Population +30\n";
+    }
+};
+
+class DisasterManagement : public Activity {
+public:
+    void perform(int& eco, int& money, int& population, int& pollution) override {
+        // Handle natural disaster
+        cout << "🌪️ Managing natural disaster response!\n";
+        pollution += 30;
+        money -= 500;
+        eco -= 5;
+        
+        cout << "Disaster contained! Pollution +30, Money -500, Eco -5\n";
+        cout << "But it could have been much worse without your intervention!\n";
+    }
+};
