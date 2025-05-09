@@ -58,6 +58,30 @@ public:
     }
 };
 
+class IndustrialZone : public Building {
+public:
+    IndustrialZone() : Building("Industrial Zone", 75) {}
+    void operate() {
+        cout << name << " provides industrial jobs for " << capacity << " citizens.\n";
+    }
+};
+
+class LuxuryResidence : public Building {
+public:
+    LuxuryResidence() : Building("Luxury Residence", 25) {}
+    void operate() {
+        cout << name << " provides premium housing for " << capacity << " wealthy citizens.\n";
+    }
+};
+
+class ShoppingMall : public Building {
+public:
+    ShoppingMall() : Building("Shopping Mall", 150) {}
+    void operate() {
+        cout << name << " provides retail space for " << capacity << " visitors.\n";
+    }
+};
+
 // === User System ===
 class User {
 public:
@@ -117,7 +141,7 @@ void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0,
     cout << "==========================================\n";
     cout << "[Mayor: " << mayor << "] [City: " << city << "] [?" << eco << "% Eco]\n";
     cout << "[??" << fixed << setprecision(1) << money << "M] [??" << people << "] [??" << co2 << "ppm] [Day: " << day << "]\n\n";
-    cout << "?1. BUILD & UPGRADE\n";
+    cout << "?1. REAL ESTATE\n";
     cout << "?2. MANAGE ENVIRONMENT\n";
     cout << "?3. CONTROL TRANSPORT\n";
     cout << "?4. CITIZEN ACTIONS\n";
@@ -274,7 +298,8 @@ void runSimulation(string username) {
     int eco = 10;
     int population = 100;
     int day = 1;
-    int resLevel = 1, comLevel = 1, resCount = 1, comCount = 1;
+    int resLevel = 1, comLevel = 1, indLevel = 1, luxLevel = 1, mallLevel = 1;
+    int resCount = 1, comCount = 1, indCount = 0, luxCount = 0, mallCount = 0;
 
     User user;
     user.username = username;
@@ -313,66 +338,174 @@ void runSimulation(string username) {
         try {
         switch (choice) {
             case 1: {
-            cout << "\n--- BUILD & UPGRADE ---\n";
+                cout << "\n--- REAL ESTATE ---\n";
                 cout << "Your resources: Money: $" << money << ", Eco: " << eco << ", Population: " << population << "\n";
-                cout << "1. Upgrade Residential Zone (Cost: $200)\n";
-                cout << "2. Upgrade Commercial District (Cost: $300)\n";
-                cout << "3. Build New Residential Zone (Cost: $500)\n";
-                cout << "4. Build New Commercial District (Cost: $700)\n";
+                cout << "1. Residential Properties\n";
+                cout << "2. Commercial Properties\n";
+                cout << "3. Industrial Properties\n";
+                cout << "4. Luxury Properties\n";
+                cout << "5. View Property Portfolio\n";
+                cout << "6. Property Maintenance\n";
                 cout << "0. Back\n";
                 cout << "Choose an option: ";
-                int buildChoice;
-                cin >> buildChoice;
+                int realEstateChoice;
+                cin >> realEstateChoice;
                 cin.ignore();
 
-                if (buildChoice == 1 && money >= 200) {
-                    // Upgrade all residential zones
-                    for (int i = 0; i < buildingCount; ++i)
-                        if (dynamic_cast<ResidentialZone*>(buildings[i])) buildings[i]->upgrade();
-                    money -= 200;
-                    population += 50;
-                    resLevel++;
-                    cout << "Population increased! (+50)\n";
-                } else if (buildChoice == 2 && money >= 300) {
-                    // Upgrade all commercial districts
-                    for (int i = 0; i < buildingCount; ++i)
-                        if (dynamic_cast<CommercialDistrict*>(buildings[i])) buildings[i]->upgrade();
-                    money -= 300;
-                    eco += 2;
-                    comLevel++;
-                    cout << "Eco improved! (+2)\n";
-                } else if (buildChoice == 3 && money >= 500 && buildingCount < 100) {
-                    buildings[buildingCount++] = new ResidentialZone();
-                    money -= 500;
-                    population += 100;
-                    resCount++;
-                    cout << "New Residential Zone built! (+100 population)\n";
-                } else if (buildChoice == 4 && money >= 700 && buildingCount < 100) {
-                    buildings[buildingCount++] = new CommercialDistrict();
-                    money -= 700;
-                    eco += 5;
-                    comCount++;
-                    cout << "New Commercial District built! (+5 eco)\n";
-                } else if (buildChoice == 0) {
-                    break;
-                } else {
-                    cout << "Not enough money or invalid choice!\n";
-                }
+                switch (realEstateChoice) {
+                    case 1: { // Residential Properties
+                        cout << "\n--- RESIDENTIAL PROPERTIES ---\n";
+                        cout << "1. Upgrade Residential Zone (Cost: $200)\n";
+                        cout << "2. Build New Residential Zone (Cost: $500)\n";
+                        cout << "3. Build Luxury Residence (Cost: $1000)\n";
+                        cout << "0. Back\n";
+                        cout << "Choose an option: ";
+                        int resChoice;
+                        cin >> resChoice;
+                        cin.ignore();
 
-                // Random event
-                int event = rand() % 5;
-                if (event == 0) {
-                    cout << "?? Bonus! You received a government grant of $200!\n";
-                    money += 200;
-                } else if (event == 1) {
-                    cout << "? Power outage! Eco drops by 2.\n";
-                    eco -= 2;
-                } else if (event == 2) {
-                    cout << "?? Citizens are happy! Population increases by 20.\n";
-                    population += 20;
-                }
+                        if (resChoice == 1 && money >= 200) {
+                            for (int i = 0; i < buildingCount; ++i)
+                                if (dynamic_cast<ResidentialZone*>(buildings[i])) buildings[i]->upgrade();
+                            money -= 200;
+                            population += 50;
+                            resLevel++;
+                            cout << "Residential zones upgraded! Population +50\n";
+                        } else if (resChoice == 2 && money >= 500 && buildingCount < 100) {
+                            buildings[buildingCount++] = new ResidentialZone();
+                            money -= 500;
+                            population += 100;
+                            resCount++;
+                            cout << "New Residential Zone built! (+100 population)\n";
+                        } else if (resChoice == 3 && money >= 1000 && buildingCount < 100) {
+                            buildings[buildingCount++] = new LuxuryResidence();
+                            money -= 1000;
+                            population += 25;
+                            money += 200; // Luxury properties generate more income
+                            luxCount++;
+                            cout << "New Luxury Residence built! (+25 population, +$200 income)\n";
+                        }
+                        break;
+                    }
+                    case 2: { // Commercial Properties
+                        cout << "\n--- COMMERCIAL PROPERTIES ---\n";
+                        cout << "1. Upgrade Commercial District (Cost: $300)\n";
+                        cout << "2. Build New Commercial District (Cost: $700)\n";
+                        cout << "3. Build Shopping Mall (Cost: $1500)\n";
+                        cout << "0. Back\n";
+                        cout << "Choose an option: ";
+                        int comChoice;
+                        cin >> comChoice;
+                        cin.ignore();
 
-                day++;
+                        if (comChoice == 1 && money >= 300) {
+                            for (int i = 0; i < buildingCount; ++i)
+                                if (dynamic_cast<CommercialDistrict*>(buildings[i])) buildings[i]->upgrade();
+                            money -= 300;
+                            eco += 2;
+                            comLevel++;
+                            cout << "Commercial districts upgraded! Eco +2\n";
+                        } else if (comChoice == 2 && money >= 700 && buildingCount < 100) {
+                            buildings[buildingCount++] = new CommercialDistrict();
+                            money -= 700;
+                            eco += 5;
+                            comCount++;
+                            cout << "New Commercial District built! (+5 eco)\n";
+                        } else if (comChoice == 3 && money >= 1500 && buildingCount < 100) {
+                            buildings[buildingCount++] = new ShoppingMall();
+                            money -= 1500;
+                            eco += 3;
+                            money += 300; // Shopping malls generate more income
+                            mallCount++;
+                            cout << "New Shopping Mall built! (+3 eco, +$300 income)\n";
+                        }
+                        break;
+                    }
+                    case 3: { // Industrial Properties
+                        cout << "\n--- INDUSTRIAL PROPERTIES ---\n";
+                        cout << "1. Build Industrial Zone (Cost: $800)\n";
+                        cout << "2. Upgrade Industrial Zone (Cost: $400)\n";
+                        cout << "0. Back\n";
+                        cout << "Choose an option: ";
+                        int indChoice;
+                        cin >> indChoice;
+                        cin.ignore();
+
+                        if (indChoice == 1 && money >= 800 && buildingCount < 100) {
+                            buildings[buildingCount++] = new IndustrialZone();
+                            money -= 800;
+                            eco -= 2; // Industrial zones decrease eco
+                            money += 150; // But generate income
+                            indCount++;
+                            cout << "New Industrial Zone built! (-2 eco, +$150 income)\n";
+                        } else if (indChoice == 2 && money >= 400) {
+                            for (int i = 0; i < buildingCount; ++i)
+                                if (dynamic_cast<IndustrialZone*>(buildings[i])) buildings[i]->upgrade();
+                            money -= 400;
+                            indLevel++;
+                            money += 100;
+                            cout << "Industrial zones upgraded! +$100 income\n";
+                        }
+                        break;
+                    }
+                    case 4: { // Luxury Properties
+                        cout << "\n--- LUXURY PROPERTIES ---\n";
+                        cout << "1. Upgrade Luxury Residence (Cost: $500)\n";
+                        cout << "2. Build New Luxury Residence (Cost: $1000)\n";
+                        cout << "0. Back\n";
+                        cout << "Choose an option: ";
+                        int luxChoice;
+                        cin >> luxChoice;
+                        cin.ignore();
+
+                        if (luxChoice == 1 && money >= 500) {
+                            for (int i = 0; i < buildingCount; ++i)
+                                if (dynamic_cast<LuxuryResidence*>(buildings[i])) buildings[i]->upgrade();
+                            money -= 500;
+                            luxLevel++;
+                            money += 300;
+                            cout << "Luxury residences upgraded! +$300 income\n";
+                        } else if (luxChoice == 2 && money >= 1000 && buildingCount < 100) {
+                            buildings[buildingCount++] = new LuxuryResidence();
+                            money -= 1000;
+                            population += 25;
+                            money += 200;
+                            luxCount++;
+                            cout << "New Luxury Residence built! (+25 population, +$200 income)\n";
+                        }
+                        break;
+                    }
+                    case 5: { // Property Portfolio
+                        cout << "\n--- PROPERTY PORTFOLIO ---\n";
+                        cout << "Residential Zones: " << resCount << " (Level " << resLevel << ")\n";
+                        cout << "Commercial Districts: " << comCount << " (Level " << comLevel << ")\n";
+                        cout << "Industrial Zones: " << indCount << " (Level " << indLevel << ")\n";
+                        cout << "Luxury Residences: " << luxCount << " (Level " << luxLevel << ")\n";
+                        cout << "Shopping Malls: " << mallCount << " (Level " << mallLevel << ")\n";
+                        cout << "Total Properties: " << buildingCount << "/100\n";
+                        break;
+                    }
+                    case 6: { // Property Maintenance
+                        cout << "\n--- PROPERTY MAINTENANCE ---\n";
+                        int maintenanceCost = (resCount + comCount + indCount + luxCount + mallCount) * 50;
+                        cout << "Maintenance cost: $" << maintenanceCost << "\n";
+                        cout << "1. Perform Maintenance\n";
+                        cout << "0. Back\n";
+                        cout << "Choose an option: ";
+                        int maintChoice;
+                        cin >> maintChoice;
+                        cin.ignore();
+
+                        if (maintChoice == 1 && money >= maintenanceCost) {
+                            money -= maintenanceCost;
+                            eco += 1;
+                            cout << "Maintenance completed! Eco +1\n";
+                        } else if (maintChoice == 1) {
+                            cout << "Not enough money for maintenance!\n";
+                        }
+                        break;
+                    }
+                }
                 break;
             }
             case 2: { // Manage Environment
