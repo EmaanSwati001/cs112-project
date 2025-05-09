@@ -182,11 +182,128 @@ public:
 };
 
 class EnergyProduction : public Activity {
+private:
+    struct EnergySource {
+        string name;
+        int cost;
+        int ecoImpact;
+        int moneyGenerated;
+        string description;
+    };
+
+    EnergySource sources[3] = {
+        {"Solar Panels", 200, 3, 100, "Traditional solar panel installation"},
+        {"Solar Roads", 500, 5, 200, "Roads that generate energy from sunlight and vehicle friction"},
+        {"Hydroelectric Dam", 1000, 4, 300, "Dam that generates power from water flow"}
+    };
+
 public:
     void perform(int& eco, int& money, int& population) {
-        eco += 2;
-        money += 150;
-        cout << "Solar energy produced! Eco +2, Money +150\n";
+        cout << "\n--- ENERGY PRODUCTION OPTIONS ---\n";
+        cout << "Select energy source to implement:\n";
+        for (int i = 0; i < 3; i++) {
+            cout << (i + 1) << ". " << sources[i].name 
+                 << " (Cost: $" << sources[i].cost 
+                 << ", Eco Impact: +" << sources[i].ecoImpact 
+                 << ", Income: $" << sources[i].moneyGenerated << ")\n";
+            cout << "   " << sources[i].description << "\n";
+        }
+        cout << "0. Cancel\n";
+        cout << "Choose energy source (0-3): ";
+        
+        int choice;
+        cin >> choice;
+        cin.ignore();
+
+        if (choice >= 1 && choice <= 3) {
+            EnergySource& source = sources[choice - 1];
+            
+            if (money >= source.cost) {
+                money -= source.cost;
+                eco += source.ecoImpact;
+                money += source.moneyGenerated;
+                
+                cout << "\nEnergy Production Report:\n";
+                cout << "Source: " << source.name << "\n";
+                cout << "Description: " << source.description << "\n";
+                cout << "Cost: $" << source.cost << "\n";
+                cout << "Eco Impact: +" << source.ecoImpact << "\n";
+                cout << "Income Generated: $" << source.moneyGenerated << "\n";
+
+                // Special effects based on energy source
+                switch (choice) {
+                    case 1: // Solar Panels
+                        cout << "Solar panels installed on buildings. Population +5\n";
+                        population += 5;
+                        break;
+                    case 2: { // Solar Roads
+                        cout << "Solar roads installed. Additional effects:\n";
+                        // Random road condition
+                        int roadCondition = rand() % 3;
+                        switch (roadCondition) {
+                            case 0:
+                                cout << "Roads in perfect condition! Extra income +$50\n";
+                                money += 50;
+                                break;
+                            case 1:
+                                cout << "Normal road conditions. No additional effects.\n";
+                                break;
+                            case 2:
+                                cout << "Roads need maintenance. Cost -$30\n";
+                                money -= 30;
+                                break;
+                        }
+                        break;
+                    }
+                    case 3: { // Hydroelectric Dam
+                        cout << "Hydroelectric dam constructed. Additional effects:\n";
+                        // Random water level
+                        int waterLevel = rand() % 3;
+                        switch (waterLevel) {
+                            case 0:
+                                cout << "High water levels! Maximum power generation. Income +$100\n";
+                                money += 100;
+                                break;
+                            case 1:
+                                cout << "Normal water levels. Standard power generation.\n";
+                                break;
+                            case 2:
+                                cout << "Low water levels. Reduced power generation. Income -$50\n";
+                                money -= 50;
+                                break;
+                        }
+                        // Environmental impact
+                        cout << "Dam creates new water ecosystem. Eco +2\n";
+                        eco += 2;
+                        break;
+                    }
+                }
+
+                // Random maintenance event (20% chance)
+                if (rand() % 5 == 0) {
+                    cout << "\nMaintenance Required: ";
+                    int maintenance = rand() % 3;
+                    switch (maintenance) {
+                        case 0:
+                            cout << "Regular maintenance needed. Cost -$20\n";
+                            money -= 20;
+                            break;
+                        case 1:
+                            cout << "System upgrade available. Cost -$50, Income +$30\n";
+                            money -= 50;
+                            money += 30;
+                            break;
+                        case 2:
+                            cout << "Emergency repair needed. Cost -$100, Eco -1\n";
+                            money -= 100;
+                            eco -= 1;
+                            break;
+                    }
+                }
+            } else {
+                cout << "Not enough money to implement this energy source!\n";
+            }
+        }
     }
     string name() const { return "Energy Production"; }
 };
@@ -263,6 +380,111 @@ public:
     string name() const { return "Celebrate"; }
 };
 
+class Deport : public CitizenAction {
+private:
+    struct IllegalActivity {
+        string name;
+        int fine;
+        int populationImpact;
+        int ecoImpact;
+        string description;
+    };
+
+    IllegalActivity activities[5] = {
+        {"Tax Evasion", 100, 2, 0, "Residents avoiding tax payments"},
+        {"Environmental Violation", 150, 3, 2, "Illegal waste disposal and pollution"},
+        {"Property Crime", 200, 4, -1, "Vandalism and property damage"},
+        {"Business Violation", 300, 5, -2, "Operating illegal businesses"},
+        {"Public Disturbance", 50, 1, 1, "Creating public nuisance"}
+    };
+
+public:
+    void act(int& eco, int& money, int& population) {
+        cout << "\n--- ILLEGAL ACTIVITIES DETECTED ---\n";
+        cout << "Select type of violation to address:\n";
+        for (int i = 0; i < 5; i++) {
+            cout << (i + 1) << ". " << activities[i].name 
+                 << " (Fine: $" << activities[i].fine 
+                 << ", Population Impact: " << activities[i].populationImpact 
+                 << ", Eco Impact: " << activities[i].ecoImpact << ")\n";
+        }
+        cout << "0. Cancel\n";
+        cout << "Choose violation type (0-5): ";
+        
+        int choice;
+        cin >> choice;
+        cin.ignore();
+
+        if (choice >= 1 && choice <= 5) {
+            IllegalActivity& activity = activities[choice - 1];
+            
+            // Apply immediate effects
+            population -= activity.populationImpact;
+            money += activity.fine;
+            eco += activity.ecoImpact;
+            
+            cout << "\nDeportation Report:\n";
+            cout << "Violation: " << activity.name << "\n";
+            cout << "Description: " << activity.description << "\n";
+            cout << "Deported: " << activity.populationImpact << " residents\n";
+            cout << "Fine collected: $" << activity.fine << "\n";
+            cout << "Eco impact: " << (activity.ecoImpact >= 0 ? "+" : "") << activity.ecoImpact << "\n";
+
+            // Random consequences
+            int consequence = rand() % 5;
+            switch (consequence) {
+                case 0:
+                    cout << "Consequence: Community unrest! Population -5, Eco -2\n";
+                    population -= 5;
+                    eco -= 2;
+                    break;
+                case 1:
+                    cout << "Consequence: Smooth process. No additional effects.\n";
+                    break;
+                case 2:
+                    cout << "Consequence: Community supports action! Money +$100, Eco +1\n";
+                    money += 100;
+                    eco += 1;
+                    break;
+                case 3:
+                    cout << "Consequence: Media attention! Population -2, Money +$200\n";
+                    population -= 2;
+                    money += 200;
+                    break;
+                case 4:
+                    cout << "Consequence: Legal challenges! Money -$50, Eco +2\n";
+                    money -= 50;
+                    eco += 2;
+                    break;
+            }
+
+            // Additional random event
+            if (rand() % 10 == 0) { // 10% chance
+                cout << "\nSpecial Event: ";
+                int specialEvent = rand() % 3;
+                switch (specialEvent) {
+                    case 0:
+                        cout << "Mass protest! Population -10, Eco -3\n";
+                        population -= 10;
+                        eco -= 3;
+                        break;
+                    case 1:
+                        cout << "Community support rally! Population +5, Eco +2\n";
+                        population += 5;
+                        eco += 2;
+                        break;
+                    case 2:
+                        cout << "Government investigation! Money -$100, Eco +1\n";
+                        money -= 100;
+                        eco += 1;
+                        break;
+                }
+            }
+        }
+    }
+    string name() const { return "Deport"; }
+};
+
 // === Template for Logs/History ===
 template<typename T>
 class Log {
@@ -326,7 +548,7 @@ void runSimulation(string username) {
     Log<string> activityLog, transportLog, citizenLog;
     Activity* activities[3] = { new Recycling(), new TreePlanting(), new EnergyProduction() };
     Transport* transports[3] = { new Bike(), new Bus(), new EV() };
-    CitizenAction* actions[3] = { new Commute(), new Protest(), new Celebrate() };
+    CitizenAction* actions[4] = { new Commute(), new Protest(), new Celebrate(), new Deport() };
 
     int choice;
     do {
@@ -542,17 +764,22 @@ void runSimulation(string username) {
             }
             case 4: { // Citizen Actions
                 cout << "\n--- CITIZEN ACTIONS ---\n";
-                cout << "1. Commute\n2. Protest\n3. Celebrate\n0. Back\nChoose: ";
+                cout << "1. Commute\n";
+                cout << "2. Protest\n";
+                cout << "3. Celebrate\n";
+                cout << "4. Deport Illegal Residents\n";
+                cout << "0. Back\n";
+                cout << "Choose an option: ";
                 int cChoice;
                 cin >> cChoice;
                 cin.ignore();
-                if (cChoice >= 1 && cChoice <= 3) {
+                if (cChoice >= 1 && cChoice <= 4) {
                     actions[cChoice - 1]->act(eco, money, population);
                     citizenLog.add(actions[cChoice - 1]->name());
                 } else if (cChoice != 0) {
                     throw ActionException("Invalid citizen action!");
                 }
-            break;
+                break;
             }
             case 5: { // City Stats
                 cout << "\n--- CITY STATS ---\n";
