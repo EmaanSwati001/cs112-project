@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <stdexcept>
+#include <vector>
 using namespace std;
 
 // === Clear screen (Optional) ===
@@ -189,18 +190,67 @@ private:
         int ecoImpact;
         int moneyGenerated;
         string description;
+        int efficiency;  // New field for tracking efficiency
+        int maintenanceLevel;  // New field for tracking maintenance
     };
 
-    EnergySource sources[3] = {
-        {"Solar Panels", 200, 3, 100, "Traditional solar panel installation"},
-        {"Solar Roads", 500, 5, 200, "Roads that generate energy from sunlight and vehicle friction"},
-        {"Hydroelectric Dam", 1000, 4, 300, "Dam that generates power from water flow"}
+    struct EnergyReport {
+        string sourceName;
+        int daysOperational;
+        int totalEnergyGenerated;
+        int totalIncome;
+        int efficiency;
+        int maintenanceLevel;
+        string status;
     };
+
+    vector<EnergyReport> energyReports;  // Track all energy installations
+
+    EnergySource sources[3] = {
+        {"Solar Panels", 200, 3, 100, "Traditional solar panel installation", 85, 100},
+        {"Solar Roads", 500, 5, 200, "Roads that generate energy from sunlight and vehicle friction", 90, 100},
+        {"Hydroelectric Dam", 1000, 4, 300, "Dam that generates power from water flow", 95, 100}
+    };
+
+    void displayEnergyReport() {
+        if (energyReports.empty()) {
+            cout << "\nNo energy infrastructure installed yet.\n";
+            return;
+        }
+
+        cout << "\n=== ENERGY INFRASTRUCTURE REPORT ===\n";
+        for (const auto& report : energyReports) {
+            cout << "\nInstallation: " << report.sourceName << "\n";
+            cout << "Days Operational: " << report.daysOperational << "\n";
+            cout << "Total Energy Generated: " << report.totalEnergyGenerated << " MWh\n";
+            cout << "Total Income: $" << report.totalIncome << "\n";
+            cout << "Efficiency: " << report.efficiency << "%\n";
+            cout << "Maintenance Level: " << report.maintenanceLevel << "%\n";
+            cout << "Status: " << report.status << "\n";
+            cout << "----------------------------------------\n";
+        }
+    }
 
 public:
     void perform(int& eco, int& money, int& population) {
         cout << "\n--- ENERGY PRODUCTION OPTIONS ---\n";
-        cout << "Select energy source to implement:\n";
+        cout << "1. Build New Energy Source\n";
+        cout << "2. View Energy Infrastructure Report\n";
+        cout << "0. Back\n";
+        cout << "Choose an option: ";
+        
+        int menuChoice;
+        cin >> menuChoice;
+        cin.ignore();
+
+        if (menuChoice == 2) {
+            displayEnergyReport();
+            return;
+        } else if (menuChoice != 1) {
+            return;
+        }
+
+        cout << "\nSelect energy source to implement:\n";
         for (int i = 0; i < 3; i++) {
             cout << (i + 1) << ". " << sources[i].name 
                  << " (Cost: $" << sources[i].cost 
@@ -223,27 +273,41 @@ public:
                 eco += source.ecoImpact;
                 money += source.moneyGenerated;
                 
-                cout << "\nEnergy Production Report:\n";
+                // Create new energy report
+                EnergyReport newReport;
+                newReport.sourceName = source.name;
+                newReport.daysOperational = 0;
+                newReport.totalEnergyGenerated = 0;
+                newReport.totalIncome = source.moneyGenerated;
+                newReport.efficiency = source.efficiency;
+                newReport.maintenanceLevel = source.maintenanceLevel;
+                newReport.status = "Operational";
+                energyReports.push_back(newReport);
+                
+                cout << "\n=== ENERGY PRODUCTION REPORT ===\n";
                 cout << "Source: " << source.name << "\n";
                 cout << "Description: " << source.description << "\n";
-                cout << "Cost: $" << source.cost << "\n";
+                cout << "Initial Cost: $" << source.cost << "\n";
                 cout << "Eco Impact: +" << source.ecoImpact << "\n";
-                cout << "Income Generated: $" << source.moneyGenerated << "\n";
+                cout << "Initial Income: $" << source.moneyGenerated << "\n";
+                cout << "Initial Efficiency: " << source.efficiency << "%\n";
+                cout << "Maintenance Level: " << source.maintenanceLevel << "%\n";
+                cout << "Status: Operational\n";
 
                 // Special effects based on energy source
                 switch (choice) {
                     case 1: // Solar Panels
-                        cout << "Solar panels installed on buildings. Population +5\n";
+                        cout << "\nSolar panels installed on buildings. Population +5\n";
                         population += 5;
                         break;
                     case 2: { // Solar Roads
-                        cout << "Solar roads installed. Additional effects:\n";
-                        // Random road condition
+                        cout << "\nSolar roads installed. Additional effects:\n";
                         int roadCondition = rand() % 3;
                         switch (roadCondition) {
                             case 0:
                                 cout << "Roads in perfect condition! Extra income +$50\n";
                                 money += 50;
+                                newReport.totalIncome += 50;
                                 break;
                             case 1:
                                 cout << "Normal road conditions. No additional effects.\n";
@@ -251,18 +315,20 @@ public:
                             case 2:
                                 cout << "Roads need maintenance. Cost -$30\n";
                                 money -= 30;
+                                newReport.maintenanceLevel -= 10;
                                 break;
                         }
                         break;
                     }
                     case 3: { // Hydroelectric Dam
-                        cout << "Hydroelectric dam constructed. Additional effects:\n";
-                        // Random water level
+                        cout << "\nHydroelectric dam constructed. Additional effects:\n";
                         int waterLevel = rand() % 3;
                         switch (waterLevel) {
                             case 0:
                                 cout << "High water levels! Maximum power generation. Income +$100\n";
                                 money += 100;
+                                newReport.totalIncome += 100;
+                                newReport.efficiency = 100;
                                 break;
                             case 1:
                                 cout << "Normal water levels. Standard power generation.\n";
@@ -270,14 +336,17 @@ public:
                             case 2:
                                 cout << "Low water levels. Reduced power generation. Income -$50\n";
                                 money -= 50;
+                                newReport.efficiency -= 10;
                                 break;
                         }
-                        // Environmental impact
                         cout << "Dam creates new water ecosystem. Eco +2\n";
                         eco += 2;
                         break;
                     }
                 }
+
+                // Update the report in the vector
+                energyReports.back() = newReport;
 
                 // Random maintenance event (20% chance)
                 if (rand() % 5 == 0) {
@@ -287,19 +356,34 @@ public:
                         case 0:
                             cout << "Regular maintenance needed. Cost -$20\n";
                             money -= 20;
+                            newReport.maintenanceLevel += 20;
                             break;
                         case 1:
                             cout << "System upgrade available. Cost -$50, Income +$30\n";
                             money -= 50;
                             money += 30;
+                            newReport.efficiency += 5;
+                            newReport.totalIncome += 30;
                             break;
                         case 2:
                             cout << "Emergency repair needed. Cost -$100, Eco -1\n";
                             money -= 100;
                             eco -= 1;
+                            newReport.maintenanceLevel = 100;
+                            newReport.efficiency -= 10;
                             break;
                     }
+                    // Update the report again
+                    energyReports.back() = newReport;
                 }
+
+                // Display final report
+                cout << "\n=== FINAL INSTALLATION REPORT ===\n";
+                cout << "Source: " << newReport.sourceName << "\n";
+                cout << "Total Income Generated: $" << newReport.totalIncome << "\n";
+                cout << "Current Efficiency: " << newReport.efficiency << "%\n";
+                cout << "Maintenance Level: " << newReport.maintenanceLevel << "%\n";
+                cout << "Status: " << newReport.status << "\n";
             } else {
                 cout << "Not enough money to implement this energy source!\n";
             }
