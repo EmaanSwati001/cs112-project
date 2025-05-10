@@ -149,9 +149,10 @@ void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0,
     cout << "?5. CITY STATS\n";
     cout << "?6. SOCIAL FEATURES\n";
     cout << "?7. MAYOR'S OFFICE\n";
+    cout << "?8. DEFENSE SYSTEM\n";
     cout << "0. ?? LOGOUT\n";
     cout << "==========================================\n";
-    cout << "Enter action (0-7): ";
+    cout << "Enter action (0-8): ";
 }
 
 // === Environment Activities (Polymorphism & Virtual Functions) ===
@@ -595,6 +596,459 @@ public:
     const char* what() const throw() { return msg.c_str(); }
 };
 
+// === Social Infrastructure ===
+class SocialInfrastructure {
+private:
+    struct SocialBuilding {
+        string name;
+        int cost;
+        int populationImpact;
+        int ecoImpact;
+        int moneyGenerated;
+        int level;
+        string description;
+    };
+
+    struct SocialReport {
+        string buildingName;
+        int patientsServed;    // For hospitals
+        int studentsEducated;  // For schools
+        int crimesPrevented;   // For police stations
+        int efficiency;
+        int maintenanceLevel;
+        string status;
+    };
+
+    vector<SocialReport> socialReports;
+
+    SocialBuilding buildings[3] = {
+        {"Hospital", 800, 50, 0, 200, 1, "Provides healthcare services to citizens"},
+        {"School", 600, 30, 1, 150, 1, "Educates young citizens"},
+        {"Police Station", 700, 20, 0, 180, 1, "Maintains law and order"}
+    };
+
+    void displaySocialReport() {
+        if (socialReports.empty()) {
+            cout << "\nNo social infrastructure built yet.\n";
+            return;
+        }
+
+        cout << "\n=== SOCIAL INFRASTRUCTURE REPORT ===\n";
+        for (const auto& report : socialReports) {
+            cout << "\nFacility: " << report.buildingName << "\n";
+            if (report.buildingName == "Hospital") {
+                cout << "Patients Served: " << report.patientsServed << "\n";
+            } else if (report.buildingName == "School") {
+                cout << "Students Educated: " << report.studentsEducated << "\n";
+            } else if (report.buildingName == "Police Station") {
+                cout << "Crimes Prevented: " << report.crimesPrevented << "\n";
+            }
+            cout << "Efficiency: " << report.efficiency << "%\n";
+            cout << "Maintenance Level: " << report.maintenanceLevel << "%\n";
+            cout << "Status: " << report.status << "\n";
+            cout << "----------------------------------------\n";
+        }
+    }
+
+public:
+    void manageSocialInfrastructure(int& money, int& eco, int& population) {
+        cout << "\n--- SOCIAL INFRASTRUCTURE ---\n";
+        cout << "1. Build New Facility\n";
+        cout << "2. View Social Infrastructure Report\n";
+        cout << "3. Manage Existing Facilities\n";
+        cout << "0. Back\n";
+        cout << "Choose an option: ";
+
+        int choice;
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1: { // Build New Facility
+                cout << "\nSelect facility to build:\n";
+                for (int i = 0; i < 3; i++) {
+                    cout << (i + 1) << ". " << buildings[i].name 
+                         << " (Cost: $" << buildings[i].cost 
+                         << ", Population Impact: +" << buildings[i].populationImpact 
+                         << ", Income: $" << buildings[i].moneyGenerated << ")\n";
+                    cout << "   " << buildings[i].description << "\n";
+                }
+                cout << "0. Cancel\n";
+                cout << "Choose facility (0-3): ";
+
+                int buildChoice;
+                cin >> buildChoice;
+                cin.ignore();
+
+                if (buildChoice >= 1 && buildChoice <= 3) {
+                    SocialBuilding& building = buildings[buildChoice - 1];
+                    
+                    if (money >= building.cost) {
+                        money -= building.cost;
+                        population += building.populationImpact;
+                        eco += building.ecoImpact;
+                        money += building.moneyGenerated;
+
+                        // Create new social report
+                        SocialReport newReport;
+                        newReport.buildingName = building.name;
+                        newReport.patientsServed = 0;
+                        newReport.studentsEducated = 0;
+                        newReport.crimesPrevented = 0;
+                        newReport.efficiency = 100;
+                        newReport.maintenanceLevel = 100;
+                        newReport.status = "Operational";
+                        socialReports.push_back(newReport);
+
+                        cout << "\n=== FACILITY CONSTRUCTION REPORT ===\n";
+                        cout << "Facility: " << building.name << "\n";
+                        cout << "Description: " << building.description << "\n";
+                        cout << "Cost: $" << building.cost << "\n";
+                        cout << "Population Impact: +" << building.populationImpact << "\n";
+                        cout << "Income Generated: $" << building.moneyGenerated << "\n";
+                        cout << "Status: Operational\n";
+
+                        // Special effects based on facility type
+                        switch (buildChoice) {
+                            case 1: { // Hospital
+                                cout << "\nHospital opens with modern equipment!\n";
+                                int healthBonus = rand() % 3;
+                                switch (healthBonus) {
+                                    case 0:
+                                        cout << "Excellent medical staff! Population +10\n";
+                                        population += 10;
+                                        break;
+                                    case 1:
+                                        cout << "Standard medical facilities.\n";
+                                        break;
+                                    case 2:
+                                        cout << "Basic medical services available.\n";
+                                        break;
+                                }
+                                break;
+                            }
+                            case 2: { // School
+                                cout << "\nSchool opens with educational programs!\n";
+                                int educationBonus = rand() % 3;
+                                switch (educationBonus) {
+                                    case 0:
+                                        cout << "Advanced curriculum! Income +$50\n";
+                                        money += 50;
+                                        break;
+                                    case 1:
+                                        cout << "Standard education program.\n";
+                                        break;
+                                    case 2:
+                                        cout << "Basic education facilities.\n";
+                                        break;
+                                }
+                                break;
+                            }
+                            case 3: { // Police Station
+                                cout << "\nPolice Station begins operations!\n";
+                                int securityBonus = rand() % 3;
+                                switch (securityBonus) {
+                                    case 0:
+                                        cout << "High security measures! Eco +1\n";
+                                        eco += 1;
+                                        break;
+                                    case 1:
+                                        cout << "Standard security protocols.\n";
+                                        break;
+                                    case 2:
+                                        cout << "Basic law enforcement.\n";
+                                        break;
+                                }
+                                break;
+                            }
+                        }
+                    } else {
+                        cout << "Not enough money to build this facility!\n";
+                    }
+                }
+                break;
+            }
+            case 2: // View Report
+                displaySocialReport();
+                break;
+            case 3: { // Manage Facilities
+                if (socialReports.empty()) {
+                    cout << "\nNo facilities to manage.\n";
+                    break;
+                }
+
+                cout << "\nSelect facility to manage:\n";
+                for (size_t i = 0; i < socialReports.size(); i++) {
+                    cout << (i + 1) << ". " << socialReports[i].buildingName << "\n";
+                }
+                cout << "0. Back\n";
+                cout << "Choose facility (0-" << socialReports.size() << "): ";
+
+                int manageChoice;
+                cin >> manageChoice;
+                cin.ignore();
+
+                if (manageChoice >= 1 && manageChoice <= static_cast<int>(socialReports.size())) {
+                    SocialReport& report = socialReports[manageChoice - 1];
+                    cout << "\n=== FACILITY MANAGEMENT ===\n";
+                    cout << "1. Upgrade Facility (Cost: $300)\n";
+                    cout << "2. Perform Maintenance (Cost: $100)\n";
+                    cout << "3. View Statistics\n";
+                    cout << "0. Back\n";
+                    cout << "Choose action: ";
+
+                    int actionChoice;
+                    cin >> actionChoice;
+                    cin.ignore();
+
+                    switch (actionChoice) {
+                        case 1: // Upgrade
+                            if (money >= 300) {
+                                money -= 300;
+                                report.efficiency += 10;
+                                if (report.buildingName == "Hospital") {
+                                    report.patientsServed += 50;
+                                    population += 5;
+                                } else if (report.buildingName == "School") {
+                                    report.studentsEducated += 30;
+                                    money += 50;
+                                } else if (report.buildingName == "Police Station") {
+                                    report.crimesPrevented += 20;
+                                    eco += 1;
+                                }
+                                cout << "Facility upgraded successfully!\n";
+                            } else {
+                                cout << "Not enough money for upgrade!\n";
+                            }
+                            break;
+                        case 2: // Maintenance
+                            if (money >= 100) {
+                                money -= 100;
+                                report.maintenanceLevel = 100;
+                                cout << "Maintenance completed!\n";
+                            } else {
+                                cout << "Not enough money for maintenance!\n";
+                            }
+                            break;
+                        case 3: // Statistics
+                            cout << "\n=== FACILITY STATISTICS ===\n";
+                            cout << "Facility: " << report.buildingName << "\n";
+                            if (report.buildingName == "Hospital") {
+                                cout << "Patients Served: " << report.patientsServed << "\n";
+                            } else if (report.buildingName == "School") {
+                                cout << "Students Educated: " << report.studentsEducated << "\n";
+                            } else if (report.buildingName == "Police Station") {
+                                cout << "Crimes Prevented: " << report.crimesPrevented << "\n";
+                            }
+                            cout << "Efficiency: " << report.efficiency << "%\n";
+                            cout << "Maintenance Level: " << report.maintenanceLevel << "%\n";
+                            cout << "Status: " << report.status << "\n";
+                            break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+};
+
+class DefenseSystem : public CityObject {
+private:
+    int defenseLevel;
+    vector<string> defenseLog;
+
+    struct Threat {
+        string name;
+        int severity;
+        string description;
+        string type;
+    };
+
+    Threat threats[7] = {
+        {"Air Strike", 3, "Enemy aircraft detected in our airspace", "Air"},
+        {"Missile Attack", 4, "Ballistic missiles launched towards our city", "Missile"},
+        {"Ground Invasion", 5, "Enemy forces approaching our borders", "Ground"},
+        {"Cyber Attack", 2, "Critical infrastructure under cyber threat", "Cyber"},
+        {"Naval Threat", 3, "Enemy ships detected near our waters", "Naval"},
+        {"Special Forces", 4, "Enemy commandos infiltrating the city", "Special"},
+        {"Drone Swarm", 3, "Multiple enemy drones approaching", "Air"}
+    };
+
+    struct DefenseUnit {
+        string name;
+        int power;
+        string type;
+        int cost;
+    };
+
+    DefenseUnit units[7] = {
+        {"Air Defense System", 3, "Air", 1000},
+        {"Missile Defense Shield", 4, "Missile", 1500},
+        {"Armored Division", 3, "Ground", 1200},
+        {"Cyber Security Unit", 2, "Cyber", 800},
+        {"Naval Defense Fleet", 3, "Naval", 1300},
+        {"Special Forces Unit", 4, "Special", 2000},
+        {"Drone Defense Network", 3, "Air", 1100}
+    };
+
+    vector<DefenseUnit> activeDefenses;
+
+    int countUnitsByType(const string& type) {
+        int count = 0;
+        for (const auto& unit : activeDefenses) {
+            if (unit.type == type) count++;
+        }
+        return count;
+    }
+
+    void showDefenseReport() {
+        cout << "\n=== DEFENSE SYSTEM REPORT ===\n";
+        cout << "Overall Status:\n";
+        cout << "------------------------\n";
+        cout << "Defense Level: " << defenseLevel << "\n";
+        cout << "Total Units Deployed: " << activeDefenses.size() << "\n";
+        cout << "Total Defense Power: " << (defenseLevel * 10) << "\n";
+        cout << "City Readiness: " << (defenseLevel * 20) << "%\n\n";
+
+        cout << "Deployed Units:\n";
+        cout << "------------------------\n";
+        for (const auto& unit : activeDefenses) {
+            cout << "- " << unit.name << "\n";
+            cout << "  Power: " << unit.power << "\n";
+            cout << "  Type: " << unit.type << "\n";
+        }
+        cout << "\n";
+
+        cout << "Defense Coverage:\n";
+        cout << "------------------------\n";
+        cout << "Air Defense: " << (countUnitsByType("Air") * 20) << "%\n";
+        cout << "Ground Defense: " << (countUnitsByType("Ground") * 20) << "%\n";
+        cout << "Naval Defense: " << (countUnitsByType("Naval") * 20) << "%\n";
+        cout << "Cyber Defense: " << (countUnitsByType("Cyber") * 20) << "%\n";
+        cout << "Special Forces: " << (countUnitsByType("Special") * 20) << "%\n\n";
+
+        cout << "Recent Events:\n";
+        cout << "------------------------\n";
+        for (const auto& event : defenseLog) {
+            cout << "- " << event << "\n";
+        }
+    }
+
+    void conductSpecialOperation(int& money) {
+        if (money >= 500) {
+            money -= 500;
+            cout << "\n=== SPECIAL OPERATION ===\n";
+            int success = rand() % 2;
+            if (success) {
+                cout << "Operation Successful!\n";
+                cout << "Enemy forces weakened!\n";
+                money += 200;
+            } else {
+                cout << "Operation Failed!\n";
+                cout << "No significant impact.\n";
+            }
+        } else {
+            cout << "Insufficient funds for special operation!\n";
+        }
+    }
+
+public:
+    DefenseSystem() : CityObject("Defense System"), defenseLevel(1) {}
+
+    void operate() {
+        cout << "\n=== MILITARY DEFENSE COMMAND ===\n";
+        cout << "Defense Level: " << defenseLevel << "\n\n";
+        cout << "Active Defense Units:\n";
+        for (const auto& unit : activeDefenses) {
+            cout << "- " << unit.name << " (Power: " << unit.power << ")\n";
+        }
+        cout << "\nRecent Threats:\n";
+        for (const auto& event : defenseLog) {
+            cout << "- " << event << "\n";
+        }
+    }
+
+    void upgrade() {
+        CityObject::upgrade();
+        defenseLevel++;
+        cout << "Defense system upgraded to level " << defenseLevel << "!\n";
+    }
+
+    void deployDefenseUnit(int& money) {
+        cout << "\nAvailable Defense Units:\n";
+        for (int i = 0; i < 7; i++) {
+            cout << (i + 1) << ". " << units[i].name 
+                 << " (Cost: $" << units[i].cost 
+                 << ", Power: " << units[i].power 
+                 << ", Type: " << units[i].type << ")\n";
+        }
+        cout << "0. Cancel\n";
+        cout << "Choose unit to deploy: ";
+        
+        int choice;
+        cin >> choice;
+        cin.ignore();
+
+        if (choice >= 1 && choice <= 7) {
+            DefenseUnit& unit = units[choice - 1];
+            if (money >= unit.cost) {
+                money -= unit.cost;
+                activeDefenses.push_back(unit);
+                cout << unit.name << " deployed successfully!\n";
+            } else {
+                cout << "Insufficient funds for " << unit.name << "!\n";
+            }
+        }
+    }
+
+    void checkThreats(int& money, int& eco, int& population) {
+        // 20% chance of a threat occurring
+        if (rand() % 5 == 0) {
+            Threat& threat = threats[rand() % 7];
+            
+            cout << "\n=== THREAT ALERT ===\n";
+            cout << "Threat Type: " << threat.type << "\n";
+            cout << "Threat Level: " << threat.severity << "\n";
+            cout << "Description: " << threat.description << "\n";
+            
+            // Check if we have appropriate defense
+            bool hasDefense = false;
+            for (const auto& unit : activeDefenses) {
+                if (unit.type == threat.type && unit.power >= threat.severity) {
+                    hasDefense = true;
+                    break;
+                }
+            }
+            
+            if (hasDefense) {
+                cout << "Threat neutralized by our defense systems!\n";
+                defenseLog.push_back("Successfully defended against " + threat.name);
+                money += 100; // Bonus for successful defense
+            } else {
+                cout << "Warning: Insufficient defense against " << threat.name << "!\n";
+                cout << "City suffered damage!\n";
+                money -= 500;
+                eco -= 2;
+                population -= 20;
+                defenseLog.push_back("Failed to defend against " + threat.name);
+            }
+            
+            // Keep only last 5 events in log
+            if (defenseLog.size() > 5) {
+                defenseLog.erase(defenseLog.begin());
+            }
+        }
+    }
+
+    void showStatus() {
+        showDefenseReport();
+    }
+
+    void specialOperation(int& money) {
+        conductSpecialOperation(money);
+    }
+};
+
 // === Simulation Core (runSimulation) ===
 void runSimulation(string username) {
     CityObject* buildings[100];
@@ -633,6 +1087,9 @@ void runSimulation(string username) {
     Activity* activities[3] = { new Recycling(), new TreePlanting(), new EnergyProduction() };
     Transport* transports[3] = { new Bike(), new Bus(), new EV() };
     CitizenAction* actions[4] = { new Commute(), new Protest(), new Celebrate(), new Deport() };
+
+    SocialInfrastructure socialInfra;
+    DefenseSystem defenseSystem;
 
     int choice;
     do {
@@ -875,10 +1332,58 @@ void runSimulation(string username) {
             }
             case 6: { // Social Features
                 cout << "\n--- SOCIAL FEATURES ---\n";
-                cout << "Leaderboard (Demo):\n";
-                cout << "1. " << username << " - Eco: " << eco << ", Population: " << population << "\n";
-                cout << "Citizen Feedback: \"We love the green spaces!\"\n";
-            break;
+                cout << "1. Manage Social Infrastructure\n";
+                cout << "2. View Leaderboard\n";
+                cout << "3. View Citizen Feedback\n";
+                cout << "0. Back\n";
+                cout << "Choose an option: ";
+                
+                int socialChoice;
+                cin >> socialChoice;
+                cin.ignore();
+
+                switch (socialChoice) {
+                    case 1:
+                        socialInfra.manageSocialInfrastructure(money, eco, population);
+                        break;
+                    case 2:
+                        cout << "\nLeaderboard (Demo):\n";
+                        cout << "1. " << username << " - Eco: " << eco << ", Population: " << population << "\n";
+                        break;
+                    case 3:
+                        cout << "\n=== CITIZEN FEEDBACK ===\n";
+                        if (eco > 30) cout << "- \"Our city is a green paradise! The air is so clean!\"\n";
+                        if (eco > 20) cout << "- \"We love the green spaces and parks!\"\n";
+                        if (eco < 10) cout << "- \"The pollution levels are concerning. We need more green initiatives!\"\n";
+                        if (population > 1000) cout << "- \"Our city is thriving! So many new opportunities!\"\n";
+                        if (population > 500) cout << "- \"The city is growing beautifully!\"\n";
+                        if (population < 200) cout << "- \"We need more housing and job opportunities to attract new residents.\"\n";
+                        if (money > 2000) cout << "- \"The city's economy is booming! Great job, Mayor!\"\n";
+                        if (money < 0) cout << "- \"The city's finances need attention! We're worried about public services.\"\n";
+                        if (money < 500) cout << "- \"We hope the city can maintain its services with current funding.\"\n";
+                        if (socialReports.size() > 0) cout << "- \"The new " << socialReports[0].buildingName << " is making a real difference!\"\n";
+                        
+                        int randomFeedback = rand() % 5;
+                        switch (randomFeedback) {
+                            case 0: cout << "- \"The public transport system is getting better!\"\n"; break;
+                            case 1: cout << "- \"The local festivals bring our community together!\"\n"; break;
+                            case 2: cout << "- \"We appreciate the efforts to maintain our parks!\"\n"; break;
+                            case 3: cout << "- \"The city's cultural diversity is amazing!\"\n"; break;
+                            case 4: cout << "- \"The new bike lanes are making cycling safer!\"\n"; break;
+                        }
+                        
+                        if (rand() % 2 == 0) {
+                            int randomConcern = rand() % 4;
+                            switch (randomConcern) {
+                                case 0: cout << "- \"We need more affordable housing options.\"\n"; break;
+                                case 1: cout << "- \"The traffic during rush hour is getting worse.\"\n"; break;
+                                case 2: cout << "- \"We'd like to see more recycling facilities.\"\n"; break;
+                                case 3: cout << "- \"The city needs more public spaces for community events.\"\n"; break;
+                            }
+                        }
+                        break;
+                }
+                break;
             }
             case 7: { // Mayor's Office
                 cout << "\n--- MAYOR'S OFFICE ---\n";
@@ -886,6 +1391,44 @@ void runSimulation(string username) {
                 if (population > 500) cout << "Achievement: Growing City!\n";
                 if (money < 0) cout << "Alert: City is in debt!\n";
             break;
+            }
+            case 8: { // Defense System
+                cout << "\n=== MILITARY DEFENSE COMMAND ===\n";
+                cout << "1. View Defense Status\n";
+                cout << "2. Deploy Defense Unit\n";
+                cout << "3. Upgrade Defense System (Cost: $2000)\n";
+                cout << "4. View Defense Report\n";
+                cout << "5. Conduct Special Operation (Cost: $500)\n";
+                cout << "0. Back\n";
+                cout << "Choose an option: ";
+                
+                int defenseChoice;
+                cin >> defenseChoice;
+                cin.ignore();
+
+                switch (defenseChoice) {
+                    case 1:
+                        defenseSystem.operate();
+                        break;
+                    case 2:
+                        defenseSystem.deployDefenseUnit(money);
+                        break;
+                    case 3:
+                        if (money >= 2000) {
+                            money -= 2000;
+                            defenseSystem.upgrade();
+                        } else {
+                            cout << "Insufficient funds for system upgrade!\n";
+                        }
+                        break;
+                    case 4:
+                        defenseSystem.showStatus();
+                        break;
+                    case 5:
+                        defenseSystem.specialOperation(money);
+                        break;
+                }
+                break;
             }
         case 0:
             cout << "Logging out...\n";
@@ -907,6 +1450,9 @@ void runSimulation(string username) {
             cin.get();
         }
         day++;
+
+        // Add threat checking
+        defenseSystem.checkThreats(money, eco, population);
     } while (choice != 0);
 
     for (int i = 0; i < buildingCount; ++i)
@@ -940,7 +1486,7 @@ int main() {
             cin.clear();
             cin.ignore(10000, '\n');
             cout << "Invalid input. Please enter a number.\n";
-            cout << "\nPress Enter to continue...";
+            cout << "\nPress Enter to conti1nue...";
             cin.get();
             cin.get();
             continue;
