@@ -929,11 +929,7 @@ private:
         cout << "Cyber Defense: " << (countUnitsByType("Cyber") * 20) << "%\n";
         cout << "Special Forces: " << (countUnitsByType("Special") * 20) << "%\n\n";
 
-        cout << "Recent Events:\n";
-        cout << "------------------------\n";
-        for (const auto& event : defenseLog) {
-            cout << "- " << event << "\n";
-        }
+     
     }
 
     void conductSpecialOperation(int& money) {
