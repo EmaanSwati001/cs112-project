@@ -1361,7 +1361,6 @@ void runSimulation(string username) {
                         if (money > 2000) cout << "- \"The city's economy is booming! Great job, Mayor!\"\n";
                         if (money < 0) cout << "- \"The city's finances need attention! We're worried about public services.\"\n";
                         if (money < 500) cout << "- \"We hope the city can maintain its services with current funding.\"\n";
-                        if (socialReports.size() > 0) cout << "- \"The new " << socialReports[0].buildingName << " is making a real difference!\"\n";
                         
                         int randomFeedback = rand() % 5;
                         switch (randomFeedback) {
@@ -1464,72 +1463,76 @@ void runSimulation(string username) {
     }
 }
 
-// === Main ===
-int main() {
+bool handleUserSession() {
     int option;
-    string username, password;
-
-    while (true) {
+    User user;
+    bool isLoggedIn = false;
+    
+    while (!isLoggedIn) {
         clearScreen();
         cout << "==========================================\n";
         cout << "   SMART ECO CITY SIMULATION - WELCOME\n";
         cout << "==========================================\n";
-        cout << "1. Login ? Existing City\n";
-        cout << "2. Register ? New Mayor Account\n";
-        cout << "3. Quick Play ? Demo Mode (No Save)\n";
+        cout << "1. Login - Existing City\n";
+        cout << "2. Register - New Mayor Account\n";
         cout << "0. Exit\n";
         cout << "==========================================\n";
-        cout << "Enter choice (0-3): ";
-        cin >> option;
-
-        if (cin.fail()) {
+        cout << "Enter choice (0-2): ";
+        
+        if (!(cin >> option)) {
             cin.clear();
             cin.ignore(10000, '\n');
             cout << "Invalid input. Please enter a number.\n";
-            cout << "\nPress Enter to conti1nue...";
-            cin.get();
+            cout << "\nPress Enter to continue...";
             cin.get();
             continue;
         }
         cin.ignore();
 
-        User user;
-
+        if (option == 0) return false;
+        
         if (option == 1) {
             cout << "Enter Username: ";
             getline(cin, user.username);
             cout << "Enter Password: ";
             getline(cin, user.password);
-
             if (user.login()) {
-                cout << "Login successful!\n";
-                runSimulation(user.username);
+                isLoggedIn = true;
             } else {
                 cout << "Invalid credentials.\n";
+                cout << "\nPress Enter to continue...";
+                cin.get();
             }
-        } else if (option == 2) {
+        }
+        else if (option == 2) {
             cout << "Choose Username: ";
             getline(cin, user.username);
             cout << "Choose Password: ";
             getline(cin, user.password);
-
             if (user.registerUser()) {
-                cout << "Registration successful!\n";
+                cout << "Registration successful! Please login.\n";
             } else {
                 cout << "Username already exists.\n";
             }
-        } else if (option == 3) {
-            runSimulation("Guest");
-        } else if (option == 0) {
-            break;
-        } else {
-            cout << "Invalid choice.\n";
+            cout << "\nPress Enter to continue...";
+            cin.get();
         }
-
-        cout << "\nPress Enter to continue...";
-        cin.get();
+        else {
+            cout << "Invalid choice.\n";
+            cout << "\nPress Enter to continue...";
+            cin.get();
+        }
     }
 
+    // Only run simulation after successful login
+    runSimulation(user.username);
+    return true;
+}
+
+int main() {
+    while (handleUserSession()) {
+        // Continue to next session if user wants to play again
+    }
     return 0;
 }
 
