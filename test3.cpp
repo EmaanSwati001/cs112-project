@@ -7,11 +7,13 @@
 #include <stdexcept>
 #include <vector>
 #include <conio.h> // For _getch()
+#include <limits>
 using namespace std;
 
 void displayBanner();
 
 // === Clear screen (Optional) ===
+
 void clearScreen() {
 #ifdef _WIN32
     system("cls");
@@ -133,6 +135,7 @@ public:
         ifstream in((username + "_city.txt").c_str());
         if (!in.is_open()) return false;
         in >> money >> eco >> population >> day >> resLevel >> comLevel >> resCount >> comCount;
+        cout << "DEBUG: Money after loading = " << money << endl;
         in.close();
         return true;
     }
@@ -1053,7 +1056,7 @@ void runSimulation(string username) {
     CityObject* buildings[100];
     int buildingCount = 0;
 
-    int money = 1000;
+    int money = 50000;
     int eco = 10;
     int population = 100;
     int day = 1;
@@ -1297,6 +1300,10 @@ void runSimulation(string username) {
                 if (tChoice >= 1 && tChoice <= 3) {
                     transports[tChoice - 1]->operate(eco, money);
                     transportLog.add(transports[tChoice - 1]->name());
+                    transportRandomEvent(money, eco, population, comCount, resCount);
+                    cout << "\n\033[1;36mPress Enter to continue...\033[0m";
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    cin.get();
                 } else if (tChoice != 0) {
                     throw ActionException("Invalid transport action!");
                 }
@@ -1374,12 +1381,22 @@ void runSimulation(string username) {
                 }
                 break;
             }
-            case 7: { // Mayor's Office
-                cout << "\n--- MAYOR'S OFFICE ---\n";
-                if (eco > 20) cout << "Achievement: Eco Champion!\n";
-                if (population > 500) cout << "Achievement: Growing City!\n";
-                if (money < 0) cout << "Alert: City is in debt!\n";
-            break;
+             case 7: { // Mayor's Office
+                cout << "\n==================== MAYOR'S OFFICE REPORT ====================\n";
+                cout << "Day: " << day << "\n";
+                cout << "Money: $" << money << " | Eco: " << eco << " | Population: " << population << "\n";
+                cout << "--------------------------------------------------------------\n";
+                cout << "Environment Actions (last 5):\n"; activityLog.show();
+                cout << "--------------------------------------------------------------\n";
+                cout << "Transport Actions (last 5):\n"; transportLog.show();
+                cout << "--------------------------------------------------------------\n";
+                cout << "Citizen Actions (last 5):\n"; citizenLog.show();
+                cout << "--------------------------------------------------------------\n";
+                cout << "Defense Status:\n"; defenseSystem.showStatus();
+                cout << "--------------------------------------------------------------\n";
+                cout << "City Stats: Money: $" << money << ", Eco: " << eco << ", Population: " << population << ", Day: " << day << "\n";
+                cout << "==============================================================\n";
+                break;
             }
             case 8: { // Defense System
                 cout << "\n=== MILITARY DEFENSE COMMAND ===\n";
