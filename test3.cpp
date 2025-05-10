@@ -6,7 +6,10 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <vector>
+#include <conio.h> // For _getch()
 using namespace std;
+
+void displayBanner();
 
 // === Clear screen (Optional) ===
 void clearScreen() {
@@ -15,18 +18,6 @@ void clearScreen() {
 #else
     system("clear");
 #endif
-}
-
-void displayBanner() {
-    std::cout << R"(
-  _____                 _     _    _____      _      _ _       
- / ____|               | |   | |  / ____|    | |    (_) |      
-| (___  _ __ ___   __ _| |_  | | | |     ___ | |     _| |_ ___ 
- \___ \| '_ ` _ \ / _` | __| | | | |    / _ \| |    | | __/ _ \
- ____) | | | | | | (_| | |_  | | | |___| (_) | |____| | ||  __/
-|_____/|_| |_| |_|\__,_|\__| |_|  \_____|\___/|______|_|\__\___|
-                                                               
-    )" << std::endl;
 }
 
 // === Abstract Base Class ===
@@ -149,21 +140,17 @@ public:
 
 // === Menu Display ===
 void displayMainMenu(string mayor, string city = "GreenHaven", float eco = 12.0, float money = 1.2, int people = 4200, int co2 = 34, int day = 27) {
-    cout << "==========================================\n";
-    cout << "   SMART ECO CITY SIMULATION - MAIN MENU  \n";
-    cout << "==========================================\n";
-    cout << "[Mayor: " << mayor << "] [City: " << city << "] [?" << eco << "% Eco]\n";
-    cout << "[??" << fixed << setprecision(1) << money << "M] [??" << people << "] [??" << co2 << "ppm] [Day: " << day << "]\n\n";
-    cout << "?1. REAL ESTATE\n";
-    cout << "?2. MANAGE ENVIRONMENT\n";
-    cout << "?3. CONTROL TRANSPORT\n";
-    cout << "?4. CITIZEN ACTIONS\n";
-    cout << "?5. CITY STATS\n";
-    cout << "?6. SOCIAL FEATURES\n";
-    cout << "?7. MAYOR'S OFFICE\n";
-    cout << "?8. DEFENSE SYSTEM\n";
-    cout << "0. ?? LOGOUT\n";
-    cout << "==========================================\n";
+    cout << "\033[1;36m";
+    cout << "1. REAL ESTATE\n";
+    cout << "2. MANAGE ENVIRONMENT\n";
+    cout << "3. CONTROL TRANSPORT\n";
+    cout << "4. CITIZEN ACTIONS\n";
+    cout << "5. CITY STATS\n";
+    cout << "6. SOCIAL FEATURES\n";
+    cout << "7. MAYOR'S OFFICE\n";
+    cout << "8. DEFENSE SYSTEM\n";
+    cout << "0. LOGOUT\n";
+    cout << "==========================================\033[0m\n";
     cout << "Enter action (0-8): ";
 }
 
@@ -180,7 +167,7 @@ public:
     void perform(int& eco, int& money, int& population) {
         eco += 3;
         money -= 50;
-        cout << "Recycling drive successful! Eco +3, Money -50\n";
+        cout << "\033[1;32mRecycling drive successful! Eco +3, Money -50\033[0m\n";
     }
     string name() const { return "Recycling"; }
 };
@@ -190,7 +177,7 @@ public:
     void perform(int& eco, int& money, int& population) {
         eco += 5;
         money -= 100;
-        cout << "Tree planting event! Eco +5, Money -100\n";
+        cout << "\033[1;32mTree planting event! Eco +5, Money -100\033[0m\n";
     }
     string name() const { return "Tree Planting"; }
 };
@@ -353,7 +340,7 @@ public:
                                 break;
                         }
                         cout << "Dam creates new water ecosystem. Eco +2\n";
-        eco += 2;
+                        eco += 2;
                         break;
                     }
                 }
@@ -398,7 +385,7 @@ public:
                 cout << "Maintenance Level: " << newReport.maintenanceLevel << "%\n";
                 cout << "Status: " << newReport.status << "\n";
             } else {
-                cout << "Not enough money to implement this energy source!\n";
+                cout << "\033[1;31mNot enough money to implement this energy source!\033[0m\n";
             }
         }
     }
@@ -531,25 +518,25 @@ public:
             int consequence = rand() % 5;
             switch (consequence) {
                 case 0:
-                    cout << "Consequence: Community unrest! Population -5, Eco -2\n";
+                    cout << "\033[1;31mConsequence: Community unrest! Population -5, Eco -2\033[0m\n";
                     population -= 5;
                     eco -= 2;
                     break;
                 case 1:
-                    cout << "Consequence: Smooth process. No additional effects.\n";
+                    cout << "\033[1;33mConsequence: Smooth process. No additional effects.\033[0m\n";
                     break;
                 case 2:
-                    cout << "Consequence: Community supports action! Money +$100, Eco +1\n";
+                    cout << "\033[1;32mConsequence: Community supports action! Money +$100, Eco +1\033[0m\n";
                     money += 100;
                     eco += 1;
                     break;
                 case 3:
-                    cout << "Consequence: Media attention! Population -2, Money +$200\n";
+                    cout << "\033[1;33mConsequence: Media attention! Population -2, Money +$200\033[0m\n";
                     population -= 2;
                     money += 200;
                     break;
                 case 4:
-                    cout << "Consequence: Legal challenges! Money -$50, Eco +2\n";
+                    cout << "\033[1;33mConsequence: Legal challenges! Money -$50, Eco +2\033[0m\n";
                     money -= 50;
                     eco += 2;
                     break;
@@ -557,21 +544,21 @@ public:
 
             // Additional random event
             if (rand() % 10 == 0) { // 10% chance
-                cout << "\nSpecial Event: ";
+                cout << "\033[1;36m\nSpecial Event: ";
                 int specialEvent = rand() % 3;
                 switch (specialEvent) {
                     case 0:
-                        cout << "Mass protest! Population -10, Eco -3\n";
+                        cout << "\033[1;31mMass protest! Population -10, Eco -3\033[0m\n";
                         population -= 10;
                         eco -= 3;
                         break;
                     case 1:
-                        cout << "Community support rally! Population +5, Eco +2\n";
+                        cout << "\033[1;32mCommunity support rally! Population +5, Eco +2\033[0m\n";
                         population += 5;
                         eco += 2;
                         break;
                     case 2:
-                        cout << "Government investigation! Money -$100, Eco +1\n";
+                        cout << "\033[1;33mGovernment investigation! Money -$100, Eco +1\033[0m\n";
                         money -= 100;
                         eco += 1;
                         break;
@@ -775,7 +762,7 @@ public:
                             }
                         }
                     } else {
-                        cout << "Not enough money to build this facility!\n";
+                        cout << "\033[1;31mNot enough money to build this facility!\033[0m\n";
                     }
                 }
                 break;
@@ -830,16 +817,16 @@ public:
                                 }
                                 cout << "Facility upgraded successfully!\n";
                             } else {
-                                cout << "Not enough money for upgrade!\n";
+                                cout << "\033[1;31mNot enough money for upgrade!\033[0m\n";
                             }
                             break;
                         case 2: // Maintenance
                             if (money >= 100) {
                                 money -= 100;
                                 report.maintenanceLevel = 100;
-                                cout << "Maintenance completed!\n";
+                                cout << "\033[1;33mMaintenance completed! Eco +1\033[0m\n";
                             } else {
-                                cout << "Not enough money for maintenance!\n";
+                                cout << "\033[1;31mNot enough money for maintenance!\033[0m\n";
                             }
                             break;
                         case 3: // Statistics
@@ -960,7 +947,7 @@ private:
                 cout << "No significant impact.\n";
             }
         } else {
-            cout << "Insufficient funds for special operation!\n";
+            cout << "\033[1;31mInsufficient funds for special operation!\033[0m\n";
         }
     }
 
@@ -1008,7 +995,7 @@ public:
                 activeDefenses.push_back(unit);
                 cout << unit.name << " deployed successfully!\n";
             } else {
-                cout << "Insufficient funds for " << unit.name << "!\n";
+                cout << "\033[1;31mInsufficient funds for " << unit.name << "!\033[0m\n";
             }
         }
     }
@@ -1106,7 +1093,6 @@ void runSimulation(string username) {
     int choice;
     do {
         clearScreen();
-        displayBanner();
         displayMainMenu(username, "GreenHaven", eco, money / 100.0, population, 34, day);
         cin >> choice;
         cin.ignore();
@@ -1131,35 +1117,35 @@ void runSimulation(string username) {
                 switch (realEstateChoice) {
                     case 1: { // Residential Properties
                         cout << "\n--- RESIDENTIAL PROPERTIES ---\n";
-                cout << "1. Upgrade Residential Zone (Cost: $200)\n";
+                        cout << "1. Upgrade Residential Zone (Cost: $200)\n";
                         cout << "2. Build New Residential Zone (Cost: $500)\n";
                         cout << "3. Build Luxury Residence (Cost: $1000)\n";
-                cout << "0. Back\n";
-                cout << "Choose an option: ";
+                        cout << "0. Back\n";
+                        cout << "Choose an option: ";
                         int resChoice;
                         cin >> resChoice;
-                cin.ignore();
+                        cin.ignore();
 
                         if (resChoice == 1 && money >= 200) {
-                    for (int i = 0; i < buildingCount; ++i)
-                        if (dynamic_cast<ResidentialZone*>(buildings[i])) buildings[i]->upgrade();
-                    money -= 200;
-                    population += 50;
-                    resLevel++;
-                            cout << "Residential zones upgraded! Population +50\n";
+                            for (int i = 0; i < buildingCount; ++i)
+                                if (dynamic_cast<ResidentialZone*>(buildings[i])) buildings[i]->upgrade();
+                            money -= 200;
+                            population += 50;
+                            resLevel++;
+                            cout << "\033[1;34mResidential zones upgraded! Population +50\033[0m\n";
                         } else if (resChoice == 2 && money >= 500 && buildingCount < 100) {
-                    buildings[buildingCount++] = new ResidentialZone();
-                    money -= 500;
-                    population += 100;
-                    resCount++;
-                    cout << "New Residential Zone built! (+100 population)\n";
+                            buildings[buildingCount++] = new ResidentialZone();
+                            money -= 500;
+                            population += 100;
+                            resCount++;
+                            cout << "\033[1;34mNew Residential Zone built! (+100 population)\033[0m\n";
                         } else if (resChoice == 3 && money >= 1000 && buildingCount < 100) {
                             buildings[buildingCount++] = new LuxuryResidence();
                             money -= 1000;
                             population += 25;
                             money += 200; // Luxury properties generate more income
                             luxCount++;
-                            cout << "New Luxury Residence built! (+25 population, +$200 income)\n";
+                            cout << "\033[1;34mNew Luxury Residence built! (+25 population, +$200 income)\033[0m\n";
                         }
                         break;
                     }
@@ -1182,11 +1168,11 @@ void runSimulation(string username) {
                             comLevel++;
                             cout << "Commercial districts upgraded! Eco +2\n";
                         } else if (comChoice == 2 && money >= 700 && buildingCount < 100) {
-                    buildings[buildingCount++] = new CommercialDistrict();
-                    money -= 700;
-                    eco += 5;
-                    comCount++;
-                    cout << "New Commercial District built! (+5 eco)\n";
+                            buildings[buildingCount++] = new CommercialDistrict();
+                            money -= 700;
+                            eco += 5;
+                            comCount++;
+                            cout << "New Commercial District built! (+5 eco)\n";
                         } else if (comChoice == 3 && money >= 1500 && buildingCount < 100) {
                             buildings[buildingCount++] = new ShoppingMall();
                             money -= 1500;
@@ -1195,7 +1181,7 @@ void runSimulation(string username) {
                             mallCount++;
                             cout << "New Shopping Mall built! (+3 eco, +$300 income)\n";
                         }
-                    break;
+                        break;
                     }
                     case 3: { // Industrial Properties
                         cout << "\n--- INDUSTRIAL PROPERTIES ---\n";
@@ -1245,9 +1231,9 @@ void runSimulation(string username) {
                             buildings[buildingCount++] = new LuxuryResidence();
                             money -= 1000;
                             population += 25;
-                    money += 200;
+                            money += 200;
                             luxCount++;
-                            cout << "New Luxury Residence built! (+25 population, +$200 income)\n";
+                            cout << "New Luxury Residence built! (+25 population, +$200 income)\033[0m\n";
                         }
                         break;
                     }
@@ -1275,9 +1261,9 @@ void runSimulation(string username) {
                         if (maintChoice == 1 && money >= maintenanceCost) {
                             money -= maintenanceCost;
                             eco += 1;
-                            cout << "Maintenance completed! Eco +1\n";
+                            cout << "\033[1;33mMaintenance completed! Eco +1\033[0m\n";
                         } else if (maintChoice == 1) {
-                            cout << "Not enough money for maintenance!\n";
+                            cout << "\033[1;31mNot enough money for maintenance!\033[0m\n";
                         }
                         break;
                     }
@@ -1295,12 +1281,12 @@ void runSimulation(string username) {
                     activityLog.add(activities[envChoice - 1]->name());
                 } else if (envChoice==4 ) {
                     eco+=2;
-                    cout<<"you encourage people to turn off the light when not in use\n";
+                    cout<<"\033[1;32mencourage people to turn off the light when not in use\033[0m\n";
                     activityLog.add("turn off light when not in use");
                 } else if (envChoice != 0) {
                     throw ActionException("Invalid environment action!");
-            }
-            break;
+                }
+                break;
             }
             case 3: { // Control Transport
                 cout << "\n--- CONTROL TRANSPORT ---\n";
@@ -1318,12 +1304,7 @@ void runSimulation(string username) {
             }
             case 4: { // Citizen Actions
                 cout << "\n--- CITIZEN ACTIONS ---\n";
-                cout << "1. Commute\n";
-                cout << "2. Protest\n";
-                cout << "3. Celebrate\n";
-                cout << "4. Deport Illegal Residents\n";
-                cout << "0. Back\n";
-                cout << "Choose an option: ";
+                cout << "1. Commute\n2. Protest\n3. Celebrate\n4. Deport Illegal Residents\n0. Back\nChoose an option: ";
                 int cChoice;
                 cin >> cChoice;
                 cin.ignore();
@@ -1333,7 +1314,7 @@ void runSimulation(string username) {
                 } else if (cChoice != 0) {
                     throw ActionException("Invalid citizen action!");
                 }
-            break;
+                break;
             }
             case 5: { // City Stats
                 cout << "\n--- CITY STATS ---\n";
@@ -1345,11 +1326,7 @@ void runSimulation(string username) {
             }
             case 6: { // Social Features
                 cout << "\n--- SOCIAL FEATURES ---\n";
-                cout << "1. Manage Social Infrastructure\n";
-                cout << "2. View Leaderboard\n";
-                cout << "3. View Citizen Feedback\n";
-                cout << "0. Back\n";
-                cout << "Choose an option: ";
+                cout << "1. Manage Social Infrastructure\n2. View Leaderboard\n3. View Citizen Feedback\n0. Back\nChoose an option: ";
                 
                 int socialChoice;
                 cin >> socialChoice;
@@ -1361,7 +1338,7 @@ void runSimulation(string username) {
                         break;
                     case 2:
                         cout << "\nLeaderboard (Demo):\n";
-                cout << "1. " << username << " - Eco: " << eco << ", Population: " << population << "\n";
+                        cout << "1. " << username << " - Eco: " << eco << ", Population: " << population << "\n";
                         break;
                     case 3:
                         cout << "\n=== CITIZEN FEEDBACK ===\n";
@@ -1395,7 +1372,7 @@ void runSimulation(string username) {
                         }
                         break;
                 }
-            break;
+                break;
             }
             case 7: { // Mayor's Office
                 cout << "\n--- MAYOR'S OFFICE ---\n";
@@ -1406,13 +1383,7 @@ void runSimulation(string username) {
             }
             case 8: { // Defense System
                 cout << "\n=== MILITARY DEFENSE COMMAND ===\n";
-                cout << "1. View Defense Status\n";
-                cout << "2. Deploy Defense Unit\n";
-                cout << "3. Upgrade Defense System (Cost: $2000)\n";
-                cout << "4. View Defense Report\n";
-                cout << "5. Conduct Special Operation (Cost: $500)\n";
-                cout << "0. Back\n";
-                cout << "Choose an option: ";
+                cout << "1. View Defense Status\n2. Deploy Defense Unit\n3. Upgrade Defense System (Cost: $2000)\n4. View Defense Report\n5. Conduct Special Operation (Cost: $500)\n0. Back\nChoose an option: ";
                 
                 int defenseChoice;
                 cin >> defenseChoice;
@@ -1430,7 +1401,7 @@ void runSimulation(string username) {
                             money -= 2000;
                             defenseSystem.upgrade();
                         } else {
-                            cout << "Insufficient funds for system upgrade!\n";
+                            cout << "\033[1;31mInsufficient funds for system upgrade!\033[0m\n";
                         }
                         break;
                     case 4:
@@ -1440,7 +1411,7 @@ void runSimulation(string username) {
                         defenseSystem.specialOperation(money);
                         break;
                 }
-            break;
+                break;
             }
         case 0:
             cout << "Logging out...\n";
@@ -1449,7 +1420,7 @@ void runSimulation(string username) {
                 throw ActionException("Invalid main menu choice!");
             }
         } catch (const ActionException& e) {
-            cout << "Error: " << e.what() << endl;
+            cout << "\033[1;31mError: " << e.what() << "\033[0m\n";
         }
 
         // Save city data after each action
@@ -1477,79 +1448,82 @@ void runSimulation(string username) {
 }
 
 bool handleUserSession() {
-    int option;
+    int choice = 1; // 1 = Login, 2 = Register, 3 = Exit
     User user;
     bool isLoggedIn = false;
 
     while (!isLoggedIn) {
         clearScreen();
         displayBanner();
-        cout << "==========================================\n";
-        cout << "   SMART ECO CITY SIMULATION - WELCOME\n";
-        cout << "==========================================\n";
-        cout << "1. Login - Existing City\n";
-        cout << "2. Register - New Mayor Account\n";
-        cout << "0. Exit\n";
-        cout << "==========================================\n";
-        cout << "Enter choice (0-2): ";
+        cout << "\033[1;36m-----------------------------------------\033[0m\n";
+        cout << (choice == 1 ? "\033[1;34m->\033[0m" : "  ") << " Login - Existing City\n";
+        cout << (choice == 2 ? "\033[1;34m->\033[0m" : "  ") << " Register - New Mayor Account\n";
+        cout << (choice == 3 ? "\033[1;34m->\033[0m" : "  ") << " Exit\n";
+        cout << "\033[1;36m-----------------------------------------\033[0m\n";
 
-        if (!(cin >> option)) {
-            cin.clear();
-            cin.ignore(10000, '\n');
-            cout << "Invalid input. Please enter a number.\n";
-            cout << "\nPress Enter to continue...";
-            cin.get();
-            continue;
+        char a = getch();
+        if (a == -32) {
+            a = getch();
+            if (a == 'H') { // Up arrow
+                if (choice == 1) choice = 3;
+                else choice--;
+            } else if (a == 'P') { // Down arrow
+                if (choice == 3) choice = 1;
+                else choice++;
+            }
         }
-        cin.ignore();
-
-        if (option == 0) return false;
-
-        if (option == 1) {
-            cout << "Enter Username: ";
-            getline(cin, user.username);
-            cout << "Enter Password: ";
-            getline(cin, user.password);
-            if (user.login()) {
-                isLoggedIn = true;
-            } else {
-                cout << "Invalid credentials.\n";
+        if (a == 13) { // Enter
+            if (choice == 3) return false;
+            if (choice == 1) {
+                cout << "\nEnter Username: ";
+                getline(cin, user.username);
+                cout << "Enter Password: ";
+                getline(cin, user.password);
+                if (user.login()) {
+                    isLoggedIn = true;
+                } else {
+                    cout << "\033[1;31mInvalid credentials.\033[0m\n";
+                    cout << "\nPress Enter to continue...";
+                    cin.get();
+                }
+            } else if (choice == 2) {
+                cout << "\nChoose Username: ";
+                getline(cin, user.username);
+                cout << "Choose Password: ";
+                getline(cin, user.password);
+                if (user.registerUser()) {
+                    cout << "\033[1;32mRegistration successful! Please login.\033[0m\n";
+                } else {
+                    cout << "\033[1;31mUsername already exists.\033[0m\n";
+                }
                 cout << "\nPress Enter to continue...";
                 cin.get();
             }
         }
-        else if (option == 2) {
-            cout << "Choose Username: ";
-            getline(cin, user.username);
-            cout << "Choose Password: ";
-            getline(cin, user.password);
-            if (user.registerUser()) {
-                cout << "Registration successful! Please login.\n";
-            } else {
-                cout << "Username already exists.\n";
-            }
-            cout << "\nPress Enter to continue...";
-            cin.get();
-        }
-        else {
-            cout << "Invalid choice.\n";
-        cout << "\nPress Enter to continue...";
-        cin.get();
-        }
     }
 
-    // Only run simulation after successful login
     runSimulation(user.username);
     return true;
 }
 
 int main() {
-    while (handleUserSession()) {
-        // Continue to next session if user wants to play again
-    }
+    while (handleUserSession()) {}
     return 0;
 }
 
+void displayBanner() {
+    cout << "\033[1;36m";
+    
+    cout << R"(
+    ____________ _____________ _______   __________________     ____ _____ _____ __________  
+  / ____|  \/  |   /\   |  __ \__   __| |  ____/ ____/ __ \   / ____|_   _|__   __\ \   / /
+ | (___ | \  / |  /  \  | |__) | | |    | |__ | |   | |  | | | |      | |    | |   \ \_/ / 
+  \___ \| |\/| | / /\ \ |  _  /  | |    |  __|| |   | |  | | | |      | |    | |    \   /  
+  ____) | |  | |/ ____ \| | \ \  | |    | |___| |___| |__| | | |____ _| |_   | |     | |   
+ |_____/|_|  |_/_/    \_\_|  \_\ |_|    |______\_____\____/   \_____|_____|  |_|     |_|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    )" <<endl;
+    cout << "\033[0m";
+}
 
 
 
