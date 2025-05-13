@@ -1417,11 +1417,103 @@ void runSimulation(string username) {
                 break;
             }
             case 7: { // Mayor's Office
-                cout << "\n--- MAYOR'S OFFICE ---\n";
-                if (eco > 20) cout << "Achievement: Eco Champion!\n";
-                if (population > 500) cout << "Achievement: Growing City!\n";
-                if (money < 0) cout << "Alert: City is in debt!\n";
-            break;
+                cout << "\n=== MAYOR'S OFFICE ===\n";
+                cout << "1. View City Statistics\n";
+                cout << "2. View Achievements\n";
+                cout << "3. View City Alerts\n";
+                cout << "4. View Performance Metrics\n";
+                cout << "5. View City Milestones\n";
+                cout << "0. Back\n";
+                cout << "Choose an option: ";
+                
+                int mayorChoice;
+                cin >> mayorChoice;
+                cin.ignore();
+
+                switch (mayorChoice) {
+                    case 1: { // City Statistics
+                        cout << "\n=== CITY STATISTICS ===\n";
+                        cout << "Economic Indicators:\n";
+                        cout << "-------------------\n";
+                        cout << "Current Budget: $" << money << "\n";
+                        cout << "Daily Income: $" << (resCount * 50 + comCount * 100 + indCount * 150 + luxCount * 200 + mallCount * 300) << "\n";
+                        cout << "Daily Expenses: $" << (resCount + comCount + indCount + luxCount + mallCount) * 20 << "\n";
+                        
+                        cout << "\nPopulation Statistics:\n";
+                        cout << "--------------------\n";
+                        cout << "Total Population: " << population << "\n";
+                        cout << "Population Growth Rate: " << (population > 100 ? "+" : "-") << (population / 100) << "%\n";
+                        cout << "Housing Capacity: " << (resCount * 100 + luxCount * 25) << "\n";
+                        
+                        cout << "\nEnvironmental Metrics:\n";
+                        cout << "--------------------\n";
+                        cout << "Eco Rating: " << eco << "\n";
+                        cout << "Environmental Impact: " << (eco > 20 ? "Positive" : eco > 10 ? "Neutral" : "Negative") << "\n";
+                        cout << "Green Spaces: " << (eco / 2) << " units\n";
+                        
+                        cout << "\nInfrastructure Overview:\n";
+                        cout << "----------------------\n";
+                        cout << "Residential Zones: " << resCount << " (Level " << resLevel << ")\n";
+                        cout << "Commercial Districts: " << comCount << " (Level " << comLevel << ")\n";
+                        cout << "Industrial Zones: " << indCount << " (Level " << indLevel << ")\n";
+                        cout << "Luxury Residences: " << luxCount << " (Level " << luxLevel << ")\n";
+                        cout << "Shopping Malls: " << mallCount << " (Level " << mallLevel << ")\n";
+                        break;
+                    }
+                    case 2: { // Achievements
+                        cout << "\n=== ACHIEVEMENTS ===\n";
+                        if (eco > 20) cout << "🏆 Eco Champion: Maintained high environmental standards\n";
+                        if (population > 500) cout << "🏆 Growing City: Reached 500 citizens\n";
+                        if (population > 1000) cout << "🏆 Metropolis: Reached 1000 citizens\n";
+                        if (money > 10000) cout << "🏆 Economic Powerhouse: Accumulated $10,000\n";
+                        if (resCount > 5) cout << "🏆 Housing Developer: Built 5 residential zones\n";
+                        if (comCount > 3) cout << "🏆 Business Hub: Established 3 commercial districts\n";
+                        if (luxCount > 2) cout << "🏆 Luxury Living: Built 2 luxury residences\n";
+                        if (mallCount > 1) cout << "🏆 Shopping Paradise: Built a shopping mall\n";
+                        if (indCount > 2) cout << "🏆 Industrial Leader: Established 2 industrial zones\n";
+                        if (day > 30) cout << "🏆 Long-term Mayor: Served for 30 days\n";
+                        break;
+                    }
+                    case 3: { // City Alerts
+                        cout << "\n=== CITY ALERTS ===\n";
+                        if (money < 0) cout << "⚠️ CRITICAL: City is in debt!\n";
+                        if (money < 1000) cout << "⚠️ WARNING: Low budget!\n";
+                        if (eco < 10) cout << "⚠️ WARNING: Poor environmental conditions!\n";
+                        if (population > (resCount * 100 + luxCount * 25)) cout << "⚠️ WARNING: Housing shortage!\n";
+                        if (day % 7 == 0) cout << "📅 REMINDER: Weekly maintenance due\n";
+                        if (eco < 5) cout << "⚠️ CRITICAL: Severe environmental degradation!\n";
+                        if (population < 50) cout << "⚠️ WARNING: Population decline!\n";
+                        break;
+                    }
+                    case 4: { // Performance Metrics
+                        cout << "\n=== PERFORMANCE METRICS ===\n";
+                        float efficiency = (float)(eco + population/100 + money/1000) / 3;
+                        cout << "Overall Efficiency: " << efficiency << "%\n";
+                        cout << "Economic Growth: " << (money > 10000 ? "Excellent" : money > 5000 ? "Good" : "Needs Improvement") << "\n";
+                        cout << "Environmental Management: " << (eco > 20 ? "Excellent" : eco > 10 ? "Good" : "Needs Improvement") << "\n";
+                        cout << "Population Growth: " << (population > 500 ? "Excellent" : population > 200 ? "Good" : "Needs Improvement") << "\n";
+                        cout << "Infrastructure Development: " << (buildingCount > 10 ? "Excellent" : buildingCount > 5 ? "Good" : "Needs Improvement") << "\n";
+                        break;
+                    }
+                    case 5: { // City Milestones
+                        cout << "\n=== CITY MILESTONES ===\n";
+                        cout << "Current Milestones:\n";
+                        cout << "------------------\n";
+                        cout << "Population: " << population << "/1000 (Next milestone: 1000 citizens)\n";
+                        cout << "Economy: $" << money << "/20000 (Next milestone: $20,000)\n";
+                        cout << "Environment: " << eco << "/30 (Next milestone: 30 eco rating)\n";
+                        cout << "Buildings: " << buildingCount << "/50 (Next milestone: 50 buildings)\n";
+                        
+                        cout << "\nCompleted Milestones:\n";
+                        cout << "-------------------\n";
+                        if (population > 100) cout << "✓ Reached 100 citizens\n";
+                        if (money > 5000) cout << "✓ Accumulated $5,000\n";
+                        if (eco > 15) cout << "✓ Achieved good environmental rating\n";
+                        if (buildingCount > 10) cout << "✓ Built 10 buildings\n";
+                        break;
+                    }
+                }
+                break;
             }
             case 8: { // Defense System
                 cout << "\n=== MILITARY DEFENSE COMMAND ===\n";
